@@ -97,7 +97,7 @@ include(EurorackCMakeLists.txt)
 
 
 target_link_libraries(PlaitsVst PRIVATE PLAITS)
-target_include_directories(PlaitsVst PRIVATE ./eurorack/)
+target_include_directories(PlaitsVst PRIVATE ./eurorack_override/ ./eurorack/)
 
 if(MSVC)
     target_compile_definitions(PlaitsVst PRIVATE _USE_MATH_DEFINES)

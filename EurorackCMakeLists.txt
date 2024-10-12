@@ -1,6 +1,6 @@
 
 add_library(PLAITS STATIC)
-target_include_directories(PLAITS PRIVATE eurorack/ ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(PLAITS PRIVATE ./eurorack_override/ ./eurorack/ ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_sources(PLAITS PRIVATE
 eurorack/plaits/dsp/voice.cc
@@ -41,7 +41,8 @@ eurorack/plaits/dsp/speech/naive_speech_synth.cc
 eurorack/plaits/dsp/speech/sam_speech_synth.cc
 eurorack/stmlib/dsp/units.cc
 eurorack/stmlib/utils/random.cc
-eurorack/plaits/resources.cc
+#eurorack/plaits/resources.cc
+eurorack_override/plaits/resources.cc
 eurorack/plaits/dsp/dsp.h
 eurorack/plaits/dsp/envelope.h
 eurorack/plaits/dsp/voice.h
@@ -76,7 +77,7 @@ eurorack/plaits/dsp/engine2/six_op_engine.h
 eurorack/plaits/dsp/engine2/string_machine_engine.h
 eurorack/plaits/dsp/engine2/virtual_analog_vcf_engine.h
 eurorack/plaits/dsp/engine2/wave_terrain_engine.h
-eurorack/plaits/dsp/fm/algorithms.h
+#eurorack/plaits/dsp/fm/algorithms.h
 eurorack/plaits/dsp/fm/dx_units.h
 eurorack/plaits/dsp/fm/envelope.h
 eurorack/plaits/dsp/fm/lfo.h
@@ -120,5 +121,6 @@ eurorack/plaits/dsp/speech/sam_speech_synth.h
 )
 
 if(MSVC)
-    target_compile_definitions(PLAITS PRIVATE TEST _USE_MATH_DEFINES "__attribute__(x)")
+    target_compile_definitions(PLAITS PRIVATE TEST _USE_MATH_DEFINES)
+    target_compile_options(PLAITS PRIVATE "/FI./eurorack_override/overrides.inc")
 endif()
