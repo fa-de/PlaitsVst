@@ -16,12 +16,15 @@ namespace MyCompanyName {
 		EventQueue<Note> inputs;
 
 		Note currentState;
+		bool freshNoteOn = false;
 
 		void AdvanceSamples(unsigned int nSamples)
 		{
-			inputs.ClearCurrentWindow(nSamples);
+			bool newEventOccurred;
+			inputs.ClearCurrentWindow(nSamples, newEventOccurred);
+			if (!newEventOccurred) return;
+			
 			//Handle most recent event
-
 			if (inputs.mostRecentEvent.velocity == 0.0f && inputs.mostRecentEvent.note != currentState.note)
 			{
 				//Ignore note off for "old" voices.
@@ -29,6 +32,7 @@ namespace MyCompanyName {
 			else
 			{
 				currentState = inputs.mostRecentEvent;
+				if (currentState.velocity > 0.f) freshNoteOn = true;
 			}
 		}
 

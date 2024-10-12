@@ -46,7 +46,7 @@ void PlaitsWrapper::Init(size_t sampleRate)
 	parameter[ParamIDs::LPG_DECAY] = 0.5f;
 	parameter[ParamIDs::LPG_COLOUR] = 0.5f;
 	parameter[ParamIDs::SIMULATE_TRIGGER] = 1.0f;
-	parameter[ParamIDs::LEGATO_TRIGGER] = 0.0f;
+	parameter[ParamIDs::LEGATO_TRIGGER] = 1.0f;
 }
 
 void PlaitsWrapper::FillBuffer(float* out, float* aux, unsigned int nSamples)
@@ -85,9 +85,17 @@ void PlaitsWrapper::FillBuffer(float* out, float* aux, unsigned int nSamples)
 			parameter[ParamIDs::LPG_COLOUR].getCurrentValue(), //lpg_colour
 		};
 
+		float gate = voiceHandler.currentState.velocity > 0.01f ? 1.0f : 0.0f;
+		if (parameter[ParamIDs::LEGATO_TRIGGER].getCurrentValue() >= 0.5f && voiceHandler.freshNoteOn)
+		{
+			gate = 0.f;
+		}
+
+		voiceHandler.freshNoteOn = false;
+
 		plaits::Modulations modulations =
 		{
-			0.f, 0.f, 0.f, 0.f, 0.f, 0.f, (voiceHandler.currentState.velocity > 0.01f) ? 1.0f : 0.0f, voiceHandler.currentState.velocity,
+			0.f, 0.f, 0.f, 0.f, 0.f, 0.f, gate, voiceHandler.currentState.velocity,
 			false, false, false, parameter[ParamIDs::SIMULATE_TRIGGER].getCurrentValue() >= 0.5f, false
 		};
 

@@ -27,8 +27,6 @@ namespace MyCompanyName {
 		VstParameterInterpolator parameter[ParamIDs::NUM_PARAMETERS];
 
 		MonoVoiceHandler voiceHandler;
-		VstParameterInterpolator morph;
-		bool triggerOnLegato = true;
 
 		static const unsigned int internalWindowLength = 8; //6-op engine glitches with larger windows. I don't yet know why...
 	};

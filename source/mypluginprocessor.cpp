@@ -119,16 +119,10 @@ tresult PLUGIN_API PlaitsVstProcessor::process (Vst::ProcessData& data)
 				case ParamIDs::LPG_COLOUR:
 				case ParamIDs::ENGINE:
 				case ParamIDs::SIMULATE_TRIGGER:
+				case ParamIDs::LEGATO_TRIGGER:
 				{
 					plaits.parameter[paramID].SetQueue(paramQueue);
 					break;
-				}
-				case ParamIDs::LEGATO_TRIGGER:	//TODO: Create a real voice handler and let it process this parameter correctly
-				{
-					Vst::ParamValue v;
-					int32 offset;
-					paramQueue->getPoint(paramQueue->getPointCount() - 1, offset, v);
-					plaits.triggerOnLegato = v >= 0.5f;
 				}
 				}
 			}
@@ -144,16 +138,7 @@ tresult PLUGIN_API PlaitsVstProcessor::process (Vst::ProcessData& data)
 			data.inputEvents->getEvent(i, e);
 			if (e.type == Vst::Event::EventTypes::kNoteOnEvent)
 			{
-				if (plaits.triggerOnLegato)	//Emulate trigger flank (insert inactive trigger for `silenceLength` samples and delay note on.
-				{
-					const int silenceLength = plaits.internalWindowLength;
-					plaits.voiceHandler.InsertNoteOff(e.sampleOffset);
-					plaits.voiceHandler.inputs.QueueEvent(e.sampleOffset + silenceLength, MonoVoiceHandler::Note({ e.noteOn.pitch, e.noteOn.velocity }));
-				}
-				else
-				{
-					plaits.voiceHandler.inputs.QueueEvent(e.sampleOffset, MonoVoiceHandler::Note({ e.noteOn.pitch, e.noteOn.velocity }));
-				}
+				plaits.voiceHandler.inputs.QueueEvent(e.sampleOffset, MonoVoiceHandler::Note({ e.noteOn.pitch, e.noteOn.velocity }));
 			}
 			else if (e.type == Vst::Event::EventTypes::kNoteOffEvent)
 			{

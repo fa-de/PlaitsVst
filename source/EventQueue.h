@@ -41,7 +41,7 @@ public:
 		points.push_back(std::pair(sampleOffset, event));
 	}
 
-	void ClearCurrentWindow(unsigned int nSamples)
+	void ClearCurrentWindow(unsigned int nSamples, bool &newEventOccured)
 	{
 		//Find the last expired event (prev) and the latest unexpired one (it)
 		auto prev = points.end();
@@ -58,6 +58,11 @@ public:
 		if (prev != points.end())
 		{
 			mostRecentEvent = prev->second;	//Store the latest expired event
+			newEventOccured = true;
+		}
+		else
+		{
+			newEventOccured = false;
 		}
 
 		//Remove all expired points
