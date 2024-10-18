@@ -10,6 +10,32 @@
 using namespace Steinberg;
 
 namespace MyCompanyName {
+	static const char16_t* EngineNames[24] = {
+		u"Virtual Analog VCF",
+		u"Phase Distortion",
+		u"Six Op FM 1",
+		u"Six Op FM 2",
+		u"Six Op FM 3",
+		u"Wave Terrain",
+		u"String Machine",
+		u"Chiptune",
+		u"Virtual Analog",
+		u"Waveshaping",
+		u"FM",
+		u"Grain",
+		u"Additive",
+		u"Wavetable",
+		u"Chord",
+		u"Speech",
+		u"Swarm",
+		u"Noise",
+		u"Particle",
+		u"String",
+		u"Modal",
+		u"Bass Drum",
+		u"Snare Drum",
+		u"Hi Hat",
+	};
 
 //------------------------------------------------------------------------
 // PlaitsVstController Implementation
@@ -25,22 +51,31 @@ tresult PLUGIN_API PlaitsVstController::initialize (FUnknown* context)
 		return result;
 	}
 
-	// Here you could register some parameters
+	// Parameters
+
+	// Declare Engine as program change parameter so we can display a nice list
+	addUnit(new Vst::Unit(STR16("Root"), Vst::kRootUnitId, Vst::kNoParentUnitId, ParamIDs::ENGINE));
+	auto* prgList = new Vst::ProgramList(STR16("Engine"), ParamIDs::ENGINE, Vst::kRootUnitId);
+	for (int32 i = 0; i < 24; i++) { prgList->addProgram(EngineNames[i]); }
+	Vst::Parameter* prgParam = prgList->getParameter();
+	prgParam->getInfo().flags |= Vst::ParameterInfo::kCanAutomate;
+	addProgramList(prgList);
+	parameters.addParameter(prgParam);
+
+	//"Regular" parameters
 	auto paramHarmonics = parameters.addParameter(STR16("Harmonics"), nullptr, 0, 0.5f, 1, ParamIDs::HARMONICS, 0, STR16("HARM"));
 	paramHarmonics->setPrecision(2);
 	auto paramTimbre = parameters.addParameter(STR16("Timbre"), nullptr, 0, 0.5f, 1, ParamIDs::TIMBRE, 0, STR16("TIMB"));
 	paramTimbre->setPrecision(2);
 	auto paramMorph = parameters.addParameter(STR16("Morph"), nullptr, 0, 0.5f, 1, ParamIDs::MORPH, 0, STR16("MORP"));
 	paramMorph->setPrecision(2);
-	auto paramEngine = parameters.addParameter(STR16("Engine"), nullptr, 0 /*23*/ /* 24 engines */, 0.0f, Steinberg::Vst::ParameterInfo::kIsList | Steinberg::Vst::ParameterInfo::kCanAutomate, ParamIDs::ENGINE, 0, STR16("ENG"));
-	//auto paramEngine = parameters.addParameter(STR16("Engine"), nullptr, 23 /* 24 engines */, 0.0f, Steinberg::Vst::ParameterInfo::kIsList | Steinberg::Vst::ParameterInfo::kCanAutomate, ParamIDs::ENGINE, 0, STR16("ENG"));
 	auto paramLpgDecay = parameters.addParameter(STR16("LPG decay"), nullptr, 0, 0.5f, 1, ParamIDs::LPG_DECAY, 0, STR16("DECAY"));
 	paramLpgDecay->setPrecision(2);
 	auto paramLpgFlavor = parameters.addParameter(STR16("LPG colour"), nullptr, 0, 1.0f, 1, ParamIDs::LPG_COLOUR, 0, STR16("LPG"));
 	paramLpgFlavor->setPrecision(2);
 	auto paramSimulateTrigger = parameters.addParameter(STR16("Simulate Trigger"), nullptr, 1, 1.0f, 1, ParamIDs::SIMULATE_TRIGGER, 0, STR16("SIM_T"));
 	auto paramLegatoTrigger = parameters.addParameter(STR16("Trigger on Legato"), nullptr, 1, 1.0f, 1, ParamIDs::LEGATO_TRIGGER, 0, STR16("TRIGL"));
-	
+
 
 	return result;
 }
